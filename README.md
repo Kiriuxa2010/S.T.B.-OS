@@ -1,2 +1,10 @@
 # Admiralix-OS
-admiralix operating system written in rust
+Admiralix OS, an OS written in Rust.
+
+# Features
+Multiple Colors
+Keyboard Support
+Double Fault System
+
+
+
