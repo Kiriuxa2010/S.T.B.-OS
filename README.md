@@ -8,7 +8,7 @@ Admiralix OS, a 32_Bit OS written in Rust.
 
 *Double Fault System
 
-![image](https://user-images.githubusercontent.com/71524929/207445756-05618489-5ff1-4bad-a027-09147e176873.jpeg)
+![Screenshot_20221216_095336](https://user-images.githubusercontent.com/71524929/208773171-ac5e956a-be92-4043-a002-a757a5be1883.png)
 
 
 
