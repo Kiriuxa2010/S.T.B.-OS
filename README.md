@@ -1,5 +1,5 @@
-# Admiralix-OS
-Admiralix OS, a 32_Bit OS written in Rust.
+# S.T.B. OS (Admiralix OS)
+S.T.B. OS is a 32_Bit OS written in Rust.
 
 ## Features
 *Multiple Colors
@@ -8,7 +8,10 @@ Admiralix OS, a 32_Bit OS written in Rust.
 
 *Double Fault System
 
-![Screenshot_20221216_095336](https://user-images.githubusercontent.com/71524929/208773171-ac5e956a-be92-4043-a002-a757a5be1883.png)
+*Fat32
+
+![image](https://user-images.githubusercontent.com/71524929/210254377-11393cad-294e-49e3-8ab8-a3a273d8eda0.png)
+
 
 
 
