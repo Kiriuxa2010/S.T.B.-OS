@@ -6,7 +6,7 @@ use spin::Mutex;
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
-        color_code: ColorCode::new(Color::White, Color::Blue),
+        color_code: ColorCode::new(Color::LightGray, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
 }
@@ -119,17 +119,27 @@ impl Writer {
     }
 }
 
-// pub fn print_something() {
+pub fn print_something() {
+    use core::fmt::Write;
+    let mut writer = Writer {
+        column_position: 0,
+        color_code: ColorCode::new(Color::Cyan, Color::Black),
+        buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
+    };
+    writer.write_string("Welcome Back!\n");
+}
+
+// pub fn print_red() {
 //     use core::fmt::Write;
 //     let mut writer = Writer {
 //         column_position: 0,
-//         color_code: ColorCode::new(Color::Yellow, Color::Black),
+//         color_code: ColorCode::new(Color::White, Color::Red),
 //         buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
 //     };
-//     writer.write_byte(b'H');
-//     writer.write_string("ello ");
-//     write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
+//     writer.write_string("ALERT\n");
 // }
+
+
 
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
@@ -148,6 +158,7 @@ macro_rules! println {
     () => ($crate::print!("\n"));
     ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
 }
+
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
     use x86_64::instructions::interrupts;
@@ -157,17 +168,4 @@ pub fn _print(args: fmt::Arguments) {
 
     });
     
-}
-
-pub fn clear(){
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
-    println!("                                                                                                        ");
 }

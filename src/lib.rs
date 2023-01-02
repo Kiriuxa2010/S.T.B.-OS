@@ -16,6 +16,7 @@ pub fn init() {
     interrupts::init_idt();
     gdt::init();
     interrupts::init_idt();
+    // commands::init_test();
     unsafe { interrupts::PICS.lock().initialize()};
     x86_64::instructions::interrupts::enable();
 }

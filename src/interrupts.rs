@@ -27,7 +27,6 @@ lazy_static! {
     };
  }
 
-
 pub static PICS: spin::Mutex<ChainedPics> =
     spin::Mutex::new(unsafe { ChainedPics::new(PIC_1_OFFSET, PIC_2_OFFSET) });
 
@@ -63,11 +62,11 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: InterruptStac
             Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore)
         );
     }
-
+    let mut event = "tab";
     let mut keyboard = KEYBOARD.lock();
     let mut port = Port::new(0x60);
-
     let scancode: u8 = unsafe { port.read() };
+
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
             match key {
@@ -76,13 +75,11 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: InterruptStac
             }
         }
     }
-
     unsafe {
         PICS.lock()
             .notify_end_of_interrupt(InterruptIndex::Keyboard.as_u8());
     }
 }
-
 
 #[derive(Debug, Clone, Copy)]
 #[repr(u8)]
