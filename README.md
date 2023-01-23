@@ -1,4 +1,4 @@
-# S.T.B. OS (Admiralix OS)
+# S.T.B. OS (Simple Terminal Based Operating System)
 S.T.B. OS is a 32_Bit OS written in Rust.
 
 ## Features
