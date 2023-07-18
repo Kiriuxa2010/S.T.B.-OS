@@ -126,18 +126,18 @@ pub fn print_something() {
         color_code: ColorCode::new(Color::Cyan, Color::Black),
         buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
     };
-    writer.write_string("Welcome Back!\n");
+    writer.write_string("Welcome to S.T.B. OS by Admiralix!\n");
 }
 
-// pub fn print_red() {
-//     use core::fmt::Write;
-//     let mut writer = Writer {
-//         column_position: 0,
-//         color_code: ColorCode::new(Color::White, Color::Red),
-//         buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
-//     };
-//     writer.write_string("ALERT\n");
-// }
+pub fn print_bsod() {
+    use core::fmt::Write;
+    let mut writer = Writer {
+        column_position: 0,
+        color_code: ColorCode::new(Color::White, Color::Blue),
+        buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
+    };
+    writer.write_string("BSoD\n");
+}
 
 
 
