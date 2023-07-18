@@ -12,7 +12,8 @@ S.T.B. OS is a 32_Bit OS written in Rust.
 
 *Heap Allocation
 
-![image](https://user-images.githubusercontent.com/71524929/210254377-11393cad-294e-49e3-8ab8-a3a273d8eda0.png)
+<img width="717" alt="Screenshot 2023-07-18 at 15 33 15" src="https://github.com/Kiriuxa2010/S.T.B.-OS/assets/71524929/235aa198-8510-4dae-93d6-0d774e20ca23">
+
 
 
 
