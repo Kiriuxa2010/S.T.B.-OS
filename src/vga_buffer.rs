@@ -1,3 +1,5 @@
+// 0xb8000 is the magid number for printing stuff to the screen
+
 use volatile::Volatile;
 use core::fmt;
 use lazy_static::lazy_static;
@@ -15,7 +17,7 @@ lazy_static! {
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum Color {
+pub enum Color { // Colors 
     Black = 0,
     Blue = 1,
     Green = 2,
@@ -111,7 +113,7 @@ impl Writer {
     fn clear_row(&mut self, row: usize) {
         let blank = ScreenChar {
             ascii_character: b' ',
-            color_code: self.color_code,
+            color_code: self.color_code, 
         };
         for col in 0..BUFFER_WIDTH {
             self.buffer.chars[row][col].write(blank);
@@ -119,7 +121,7 @@ impl Writer {
     }
 }
 
-pub fn print_something() {
+pub fn print_something() { // prints the welcome string 
     use core::fmt::Write;
     let mut writer = Writer {
         column_position: 0,
@@ -129,7 +131,7 @@ pub fn print_something() {
     writer.write_string("Welcome to S.T.B. OS by Admiralix!\n");
 }
 
-pub fn print_bsod() {
+pub fn print_bsod() { // makes screen blue 
     use core::fmt::Write;
     let mut writer = Writer {
         column_position: 0,
