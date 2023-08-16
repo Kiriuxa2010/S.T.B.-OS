@@ -38,7 +38,7 @@ pub(crate) fn add_scancode(scancode: u8) {
         println!(" CRTL = Shows System Information  \n");
         println!("================================= \n");
     }
-    if scancode == 0x0F { // TAB Key
+    if scancode == 0x0F { // TAB Key, clears the screen by 26 rows 
         for n in 1..26 {
             println!("                          ");
         }
