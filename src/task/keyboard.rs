@@ -59,6 +59,7 @@ pub(crate) fn add_scancode(scancode: u8) {
         println!("=================================\n");
     }
     if scancode == 0x44 { // F10 Key    
+        // shutdown function isnt here cause i forgot to update repository 
     }    
 }
 
