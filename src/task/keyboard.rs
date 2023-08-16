@@ -1,4 +1,4 @@
-use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}};
+use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}}; // imports
 use conquer_once::spin::OnceCell;
 use core::arch::asm;
 use core::{
@@ -30,7 +30,7 @@ pub(crate) fn add_scancode(scancode: u8) {
     } else {
         println!("WARNING: scancode queue uninitialized");
     }
-    if scancode == 0x3B { // F1 Key
+    if scancode == 0x3B { // F1 Key, prints system help(duh)
         println!("==========System Help============ \n");
         println!("                                  \n");
         println!(" F1 = Dispalys This Information   \n");
@@ -43,7 +43,7 @@ pub(crate) fn add_scancode(scancode: u8) {
             println!("                          ");
         }
     }
-    if scancode == 0x1D {
+    if scancode == 0x1D { // prints the system informarion(duh)
         println!("=======System Information========\n");
         println!("                                 \n");
         println!(" OS: S.T.B. OS by Admiralix      \n");
