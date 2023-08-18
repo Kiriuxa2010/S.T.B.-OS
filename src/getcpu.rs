@@ -35,7 +35,7 @@ pub fn get_cpu_name() -> Option<[u8; 48]> {
     Some(cpu_name)
 }
 
-pub fn print_cpu_name(cpu_name: &[u8; 48]) {
+pub fn print_cpu_name(cpu_name: &[u8; 48]) { // literally prints the cpu name and id, might show display errors depending on your cpu
     let name_str = core::str::from_utf8(cpu_name).unwrap_or("<Invalid UTF-8>");
     println!(" CPU Name: {}", name_str.trim());
 }
