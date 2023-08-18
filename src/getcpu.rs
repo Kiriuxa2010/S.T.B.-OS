@@ -1,3 +1,5 @@
+// this inline assembly code prints out the CPU name and id
+
 #![no_std]
 #![feature(asm)]
 
