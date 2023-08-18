@@ -131,14 +131,14 @@ pub fn print_something() { // prints the welcome string
     writer.write_string("Welcome to S.T.B. OS by Admiralix!\n");
 }
 
-pub fn print_bsod() { // makes screen blue 
+pub fn print_bsod() { // makes screen blue if an error comes
     use core::fmt::Write;
     let mut writer = Writer {
         column_position: 0,
         color_code: ColorCode::new(Color::White, Color::Blue),
         buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
     };
-    writer.write_string("BSoD\n");
+    writer.write_string("FATAL ERROR ENCOUNTERED\n");
 }
 
 
@@ -150,7 +150,7 @@ impl fmt::Write for Writer {
     }
 }
 
-#[macro_export]
+#[macro_export] // this makes print println actually print to the screen in the os
 macro_rules! print {
     ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
 }
