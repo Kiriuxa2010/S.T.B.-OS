@@ -45,7 +45,7 @@ pub(crate) fn add_scancode(scancode: u8) {
             println!("                          ");
         }
     }
-    if scancode == 0x1D { // prints the system informarion(duh)
+    if scancode == 0x3C { // prints the system informarion(duh) when pressing the f2 key
         println!("=======System Information========\n");
         println!("                                 \n");
         println!(" OS: S.T.B. OS by Admiralix      \n");
@@ -58,12 +58,15 @@ pub(crate) fn add_scancode(scancode: u8) {
             println!("FAILED TO GET CPU NAME AND INFORMATION ERROR CODE:");
         }
         println!(" RES: 80x25                      \n");
-        println!(" RAM: UNKNOWN                    \n");
+        println!(" RAM: UNKNOWN                    \n"); // dont have a way of showing ram
         println!("=================================\n");
     }
     if scancode == 0x44 { // F10 Key    
         // shutdown function isnt here cause i forgot to update repository 
     }    
+    if scancode == 0x3D { // f3 key
+        println!("no function yet!");
+    }
 }
 
 
