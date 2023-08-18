@@ -1,6 +1,9 @@
 # S.T.B. OS (Simple Terminal Based Operating System)
 S.T.B. OS is a 32_Bit OS written in Rust.
 
+The goal of this project is to
+make an os similar to msdos.
+
 ## Features
 *Multiple Colors
 
