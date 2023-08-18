@@ -1,3 +1,5 @@
+// this code allows keyboard input and shortcuts such as system information
+
 use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}}; // imports
 use conquer_once::spin::OnceCell;
 use core::arch::asm;
@@ -15,7 +17,7 @@ use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 static SCANCODE_QUEUE: OnceCell<ArrayQueue<u8>> = OnceCell::uninit();
 static WAKER: AtomicWaker = AtomicWaker::new();
 
-const osver: &str = "0.9.3";
+const osver: &str = "0.9.4";
 
 /// Called by the keyboard interrupt handler
 ///
@@ -23,7 +25,7 @@ const osver: &str = "0.9.3";
 pub(crate) fn add_scancode(scancode: u8) {
     if let Ok(queue) = SCANCODE_QUEUE.try_get() {
         if let Err(_) = queue.push(scancode) {
-            println!("WARNING: scancode queue full; dropping keyboard input");
+            println!("WARNING: scancode queue full; dropping keyboard input"); // if the scancodes are full, the keyboard input drops thus you cant type anymore
         } else {
             WAKER.wake();
         }
@@ -53,7 +55,7 @@ pub(crate) fn add_scancode(scancode: u8) {
         if let Some(cpu_name) = get_cpu_name() {
             print_cpu_name(&cpu_name);
         } else {
-            println!("Failed to retrieve CPU name.");
+            println!("FAILED TO GET CPU NAME AND INFORMATION ERROR CODE:");
         }
         println!(" RES: 80x25                      \n");
         println!(" RAM: UNKNOWN                    \n");
@@ -102,7 +104,7 @@ impl Stream for ScancodeStream {
     }
 }
 
-pub async fn print_keypresses() {
+pub async fn print_keypresses() { // this code is the main part, this code is responsible for keyboard input
     let mut scancodes = ScancodeStream::new();
     let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore);
 
