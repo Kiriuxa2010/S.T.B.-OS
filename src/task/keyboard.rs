@@ -48,6 +48,7 @@ pub(crate) fn add_scancode(scancode: u8) {
         println!("                                 \n");
         println!(" OS: S.T.B. OS by Admiralix      \n");
         println!(" OS VERSION: {}                  \n", osver );
+        println!("                                 \n ");
         println!(" GPU: VGA                        \n");
         if let Some(cpu_name) = get_cpu_name() {
             print_cpu_name(&cpu_name);
