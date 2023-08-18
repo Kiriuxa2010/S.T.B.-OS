@@ -1,3 +1,5 @@
+// same thing as in /src/
+
 #![no_std]
 #![feature(asm)]
 
