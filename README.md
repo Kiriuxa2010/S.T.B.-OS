@@ -15,6 +15,8 @@ make an os similar to msdos.
 
 *Heap Allocation
 
+*"Shortcuts" 
+
 <img width="717" alt="Screenshot 2023-07-18 at 15 33 15" src="https://github.com/Kiriuxa2010/S.T.B.-OS/assets/71524929/235aa198-8510-4dae-93d6-0d774e20ca23">
 
 
