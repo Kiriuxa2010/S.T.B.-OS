@@ -9,12 +9,16 @@ use core::panic::PanicInfo; // imports
 mod vga_buffer;
 // mod getcpu;
 use bootloader::{BootInfo, entry_point};
+use crate::vga_buffer::{Writer, WRITER};
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 use admiralix_os::task::{executor::Executor, keyboard, Task};
 use core::arch::asm;
+use x86_64::instructions::hlt;
 
 extern crate alloc;
 entry_point!(kernel_main);
+
+
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from here
     use admiralix_os::memory::BootInfoFrameAllocator;
@@ -26,14 +30,17 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from
     let osname = "S.T.B.";
     println!("Starting {} OS...\n", osname);
 
+    delay(10);
+    
+    
     vga_buffer::print_something();
     admiralix_os::init();
     
     //let mut writer = vga_buffer::Writer::new(vga_buffer::Color::Yellow, vga_buffer::BUFFER.lock());
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
-    let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
-
+    let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) }; // this allocates the frame memory system time at 0x8493 and boot memory map, it also boot_info
+ 
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     let mut executor = Executor::new();
@@ -42,6 +49,21 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from
     executor.run();
 
     admiralix_os::hlt_loop();
+}
+
+fn delay(seconds: u32) {
+    let iterations_per_second = 1000000;
+    let total_iterations = seconds * iterations_per_second;
+
+    for _ in 0..total_iterations {
+        unsafe{
+            asm!
+            ("nop",
+            
+            options(nostack)
+            );
+        }
+    }
 }
 
 #[cfg(not(test))] // tester 

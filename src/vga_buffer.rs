@@ -1,5 +1,3 @@
-// 0xb8000 is the magid number for printing stuff to the screen
-
 use volatile::Volatile;
 use core::fmt;
 use lazy_static::lazy_static;
@@ -10,14 +8,14 @@ lazy_static! {
         column_position: 0,
         color_code: ColorCode::new(Color::LightGray, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+        show_prompt: false, // Add a flag to control whether "C:" should be displayed
     });
 }
-
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum Color { // Colors 
+pub enum Color {
     Black = 0,
     Blue = 1,
     Green = 2,
@@ -65,31 +63,56 @@ pub struct Writer {
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer,
+    show_prompt: bool, // Flag to control whether "C:" should be displayed
 }
 
 impl Writer {
-    pub fn write_byte(&mut self, byte: u8){
+    pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),
             byte => {
                 if self.column_position >= BUFFER_WIDTH {
-                    self.new_line()
+                    self.new_line();
                 }
 
-                let row = BUFFER_HEIGHT -1;
+                let row = BUFFER_HEIGHT - 1;
                 let col = self.column_position;
 
-                let color_code = self.color_code;
+                if self.show_prompt {
+                    self.write_string("user$aos: ");
+                }
+
                 self.buffer.chars[row][col].write(ScreenChar {
                     ascii_character: byte,
-                    color_code,
+                    color_code: self.color_code,
                 });
+
                 self.column_position += 1;
             }
         }
     }
+
+    pub fn write_string(&mut self, s: &str) {
+        if self.column_position >= BUFFER_WIDTH {
+            self.new_line();
+        }
     
-    fn write_string(&mut self, s: &str) {
+        let row = BUFFER_HEIGHT - 1;
+        let col = self.column_position;
+    
+        if col < 11 {
+            self.write_byte(b'u'); // Display 'u'
+            self.write_byte(b's'); // Display 's'
+            self.write_byte(b'e'); // Display 'e'
+            self.write_byte(b'r'); // Display 'r'
+            self.write_byte(b'$'); // Display '$'
+            self.write_byte(b'a'); // Display 'a'
+            self.write_byte(b'o'); // Display 'o'
+            self.write_byte(b's'); // Display 's'
+            self.write_byte(b':'); // Display ':'
+            self.write_byte(b' '); // Display ' '
+        }
+    
         for byte in s.bytes() {
             match byte {
                 0x20..=0x7e | b'\n' => self.write_byte(byte),
@@ -98,49 +121,76 @@ impl Writer {
         }
     }
 
-    
     fn new_line(&mut self) {
+        // Shift characters up by one row, excluding the last row
         for row in 1..BUFFER_HEIGHT {
             for col in 0..BUFFER_WIDTH {
                 let character = self.buffer.chars[row][col].read();
                 self.buffer.chars[row - 1][col].write(character);
             }
         }
+
+        // Clear the last row instead of the row above it
         self.clear_row(BUFFER_HEIGHT - 1);
+
+        // Move the cursor to the beginning of the new line
         self.column_position = 0;
     }
 
     fn clear_row(&mut self, row: usize) {
         let blank = ScreenChar {
             ascii_character: b' ',
-            color_code: self.color_code, 
+            color_code: self.color_code,
         };
         for col in 0..BUFFER_WIDTH {
             self.buffer.chars[row][col].write(blank);
         }
     }
+
+    fn clear_character(&mut self, row: usize, col: usize) {
+        let blank = ScreenChar {
+            ascii_character: b' ',
+            color_code: self.color_code,
+        };
+        self.buffer.chars[row][col].write(blank);
+    }
 }
 
-pub fn print_something() { // prints the welcome string 
+pub fn print_something() {
     use core::fmt::Write;
-    let mut writer = Writer {
-        column_position: 0,
-        color_code: ColorCode::new(Color::Cyan, Color::Black),
-        buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
-    };
+    let mut writer = WRITER.lock();
+    writer.show_prompt = false; // Hide "C:" for this message
+    writer.color_code = ColorCode::new(Color::Cyan, Color::Black); // Customize the color if needed
     writer.write_string("Welcome to S.T.B. OS by Admiralix!\n");
+    writer.show_prompt = true; // Restore "C:" display
+    writer.color_code = ColorCode::new(Color::LightGray, Color::Black); // Restore the default color
 }
 
-pub fn print_bsod() { // makes screen blue if an error comes
+// pub fn print_bsod() {
+//     use core::fmt::Write;
+//     let mut writer = Writer {
+//         column_position: 0,
+//         color_code: ColorCode::new(Color::White, Color::Blue),
+//         buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
+//     };
+//     writer.write_string("BSoD\n");
+// }
+
+pub fn print_shutdown() {
     use core::fmt::Write;
-    let mut writer = Writer {
-        column_position: 0,
-        color_code: ColorCode::new(Color::White, Color::Blue),
-        buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
-    };
-    writer.write_string("FATAL ERROR ENCOUNTERED\n");
-}
+    
+    {
+        let mut writer = WRITER.lock();
+        writer.show_prompt = false; // Hide "C:" for this message
+        writer.color_code = ColorCode::new(Color::Yellow, Color::Black); // Customize the color if needed
+        writer.write_string("It is now safe to turn off your computer\n");
+    } // The lock is released here, and the changes to show_prompt and color_code are discarded.
 
+    // Restore "C:" display and the default color
+    let mut writer = WRITER.lock();
+    writer.show_prompt = true;
+    writer.color_code = ColorCode::new(Color::LightGray, Color::Black);
+}
 
 
 impl fmt::Write for Writer {
@@ -150,7 +200,7 @@ impl fmt::Write for Writer {
     }
 }
 
-#[macro_export] // this makes print println actually print to the screen in the os
+#[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
 }

@@ -1,6 +1,4 @@
-// this code allows keyboard input and shortcuts such as system information
-
-use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}}; // imports
+use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}, vga_buffer::{print_shutdown}};
 use conquer_once::spin::OnceCell;
 use core::arch::asm;
 use core::{
@@ -13,11 +11,17 @@ use futures_util::{
     task::AtomicWaker,
 };
 use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
+use x86_64::instructions::hlt;
+
+// mod getcpu;
+use bootloader::{BootInfo, entry_point};
+use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
+
 
 static SCANCODE_QUEUE: OnceCell<ArrayQueue<u8>> = OnceCell::uninit();
 static WAKER: AtomicWaker = AtomicWaker::new();
 
-const osver: &str = "0.9.4";
+const OSVER: &str = "0.9.3";
 
 /// Called by the keyboard interrupt handler
 ///
@@ -25,48 +29,55 @@ const osver: &str = "0.9.4";
 pub(crate) fn add_scancode(scancode: u8) {
     if let Ok(queue) = SCANCODE_QUEUE.try_get() {
         if let Err(_) = queue.push(scancode) {
-            println!("WARNING: scancode queue full; dropping keyboard input"); // if the scancodes are full, the keyboard input drops thus you cant type anymore
+            println!("WARNING: scancode queue full; dropping keyboard input");
         } else {
             WAKER.wake();
         }
     } else {
         println!("WARNING: scancode queue uninitialized");
     }
-    if scancode == 0x3B { // F1 Key, prints system help(duh)
+    if scancode == 0x3B { // F1 Key
         println!("==========System Help============ \n");
-        println!("                                  \n");
+        // println!("                                  \n");
         println!(" F1 = Dispalys This Information   \n");
         println!(" TAB = Clears the Screen          \n");
         println!(" CRTL = Shows System Information  \n");
+        println!(" F10 = 'Shuts' PC down            \n");
         println!("================================= \n");
     }
-    if scancode == 0x0F { // TAB Key, clears the screen by 26 rows 
+    if scancode == 0x0F { // TAB Key
         for n in 1..26 {
             println!("                          ");
         }
     }
-    if scancode == 0x3C { // prints the system informarion(duh) when pressing the f2 key
+    if scancode == 0x1D {
         println!("=======System Information========\n");
-        println!("                                 \n");
+        // println!("                                 \n");
         println!(" OS: S.T.B. OS by Admiralix      \n");
-        println!(" OS VERSION: {}                  \n", osver );
-        println!("                                 \n ");
+        println!(" OS VERSION: {}                  \n", OSVER );
         println!(" GPU: VGA                        \n");
         if let Some(cpu_name) = get_cpu_name() {
             print_cpu_name(&cpu_name);
         } else {
-            println!("FAILED TO GET CPU NAME AND INFORMATION ERROR CODE:");
+            println!("Failed to retrieve CPU name.");
         }
         println!(" RES: 80x25                      \n");
-        println!(" RAM: UNKNOWN                    \n"); // dont have a way of showing ram
+        println!(" RAM: UNKNOWN                    \n");
         println!("=================================\n");
     }
     if scancode == 0x44 { // F10 Key    
-        // shutdown function isnt here cause i forgot to update repository 
+        // TODO: Add a PC restart  
+        // for n in 1..26 {
+        //     println!("                          ");
+        // }
+        print_shutdown();
+        hlt();
+        loop{}
     }    
-    if scancode == 0x3D { // f3 key
-        println!("no function yet!");
-    }
+    // if scancode == 0x0EF {
+    //     clear_character();
+       
+    // }
 }
 
 
@@ -107,7 +118,7 @@ impl Stream for ScancodeStream {
     }
 }
 
-pub async fn print_keypresses() { // this code is the main part, this code is responsible for keyboard input
+pub async fn print_keypresses() {
     let mut scancodes = ScancodeStream::new();
     let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore);
 

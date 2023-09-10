@@ -1,5 +1,3 @@
-// this inline assembly code prints out the CPU name and id
-
 #![no_std]
 #![feature(asm)]
 
@@ -35,7 +33,7 @@ pub fn get_cpu_name() -> Option<[u8; 48]> {
     Some(cpu_name)
 }
 
-pub fn print_cpu_name(cpu_name: &[u8; 48]) { // literally prints the cpu name and id, might show display errors depending on your cpu
+pub fn print_cpu_name(cpu_name: &[u8; 48]) {
     let name_str = core::str::from_utf8(cpu_name).unwrap_or("<Invalid UTF-8>");
     println!(" CPU Name: {}", name_str.trim());
 }

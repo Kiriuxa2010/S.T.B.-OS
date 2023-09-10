@@ -5,7 +5,6 @@ use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 use crate::println;
 use crate::print;
 use crate::gdt;
-use crate::vga_buffer::print_bsod;
 use pic8259::ChainedPics;
 use crate::vga_buffer;
 use spin;
@@ -35,7 +34,6 @@ lazy_static! {
         idt
     };
  }
-
 
 pub static PICS: spin::Mutex<ChainedPics> =
     spin::Mutex::new(unsafe { ChainedPics::new(PIC_1_OFFSET, PIC_2_OFFSET) });
