@@ -13,12 +13,11 @@ use crate::vga_buffer::{Writer, WRITER};
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 use admiralix_os::task::{executor::Executor, keyboard, Task};
 use core::arch::asm;
+use x86_64::instructions::port::Port;
 use x86_64::instructions::hlt;
 
 extern crate alloc;
 entry_point!(kernel_main);
-
-
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from here
     use admiralix_os::memory::BootInfoFrameAllocator;
@@ -30,9 +29,10 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from
     let osname = "S.T.B.";
     println!("Starting {} OS...\n", osname);
 
-    delay(10);
+    delay(5);
     
-    
+    play_beep();
+
     vga_buffer::print_something();
     admiralix_os::init();
     
@@ -65,6 +65,53 @@ fn delay(seconds: u32) {
         }
     }
 }
+
+pub fn play_beep() {
+    // Define the I/O ports for the speaker
+    const SPEAKER_CONTROL_PORT: u16 = 0x61;
+    const SPEAKER_DATA_PORT: u16 = 0x42;
+
+    // Disable the speaker by clearing the least significant bit of the control port
+    let mut control_port = Port::new(SPEAKER_CONTROL_PORT);
+    let control_byte: u8 = unsafe { control_port.read() };
+    unsafe {
+        control_port.write(control_byte & 0xFE);
+    }
+
+    // Set the frequency for the beep (adjust this to change the pitch)
+    let mut data_port = Port::new(SPEAKER_DATA_PORT);
+    let frequency: u32 = 1000; // Adjust this for the desired frequency
+    let divisor: u32 = 1193180 / frequency;
+
+    // Send the command to the speaker
+    unsafe {
+        data_port.write((divisor & 0xFF) as u8);
+        data_port.write((divisor >> 8) as u8);
+    }
+
+    // Enable the speaker by setting the least significant bit of the control port
+    unsafe {
+        control_port.write(control_byte | 0x01);
+    }
+
+    // Wait for a short duration to allow the beep to play (you can adjust this)
+    for _ in 0..10000 {
+        unsafe {
+            asm!
+            (
+                "nop",
+                options(nostack) 
+            );
+        }
+    }
+
+    // Disable the speaker again
+    unsafe {
+        control_port.write(control_byte & 0xFE);
+    }
+}
+
+
 
 #[cfg(not(test))] // tester 
 #[panic_handler]

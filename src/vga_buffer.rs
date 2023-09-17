@@ -2,13 +2,14 @@ use volatile::Volatile;
 use core::fmt;
 use lazy_static::lazy_static;
 use spin::Mutex;
+use core::arch::asm;
 
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
         color_code: ColorCode::new(Color::LightGray, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-        show_prompt: false, // Add a flag to control whether "C:" should be displayed
+        // show_prompt: false, // Add a flag to control whether "C:" should be displayed
     });
 }
 
@@ -59,11 +60,12 @@ struct Buffer {
     chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
 
+
 pub struct Writer {
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer,
-    show_prompt: bool, // Flag to control whether "C:" should be displayed
+    // show_prompt: bool, // Flag to control whether "C:" should be displayed
 }
 
 impl Writer {
@@ -78,9 +80,6 @@ impl Writer {
                 let row = BUFFER_HEIGHT - 1;
                 let col = self.column_position;
 
-                if self.show_prompt {
-                    self.write_string("user$aos: ");
-                }
 
                 self.buffer.chars[row][col].write(ScreenChar {
                     ascii_character: byte,
@@ -100,16 +99,18 @@ impl Writer {
         let row = BUFFER_HEIGHT - 1;
         let col = self.column_position;
     
-        if col < 11 {
+        if col < 13 {
             self.write_byte(b'u'); // Display 'u'
             self.write_byte(b's'); // Display 's'
             self.write_byte(b'e'); // Display 'e'
             self.write_byte(b'r'); // Display 'r'
-            self.write_byte(b'$'); // Display '$'
+            self.write_byte(b'@'); // Display '$'
             self.write_byte(b'a'); // Display 'a'
             self.write_byte(b'o'); // Display 'o'
             self.write_byte(b's'); // Display 's'
             self.write_byte(b':'); // Display ':'
+            self.write_byte(b' '); // Display ' '
+            self.write_byte(b'#'); // Display ' '
             self.write_byte(b' '); // Display ' '
         }
     
@@ -159,10 +160,10 @@ impl Writer {
 pub fn print_something() {
     use core::fmt::Write;
     let mut writer = WRITER.lock();
-    writer.show_prompt = false; // Hide "C:" for this message
+    // writer.show_prompt = false; // Hide "C:" for this message
     writer.color_code = ColorCode::new(Color::Cyan, Color::Black); // Customize the color if needed
-    writer.write_string("Welcome to S.T.B. OS by Admiralix!\n");
-    writer.show_prompt = true; // Restore "C:" display
+    writer.write_string("Welcome to S.T.B. OS 0.9.8 by Admiralix!\n");
+    // writer.show_prompt = true; // Restore "C:" display
     writer.color_code = ColorCode::new(Color::LightGray, Color::Black); // Restore the default color
 }
 
@@ -181,14 +182,14 @@ pub fn print_shutdown() {
     
     {
         let mut writer = WRITER.lock();
-        writer.show_prompt = false; // Hide "C:" for this message
+        // writer.show_prompt = false; // Hide "C:" for this message
         writer.color_code = ColorCode::new(Color::Yellow, Color::Black); // Customize the color if needed
         writer.write_string("It is now safe to turn off your computer\n");
     } // The lock is released here, and the changes to show_prompt and color_code are discarded.
 
     // Restore "C:" display and the default color
     let mut writer = WRITER.lock();
-    writer.show_prompt = true;
+    // writer.show_prompt = true;
     writer.color_code = ColorCode::new(Color::LightGray, Color::Black);
 }
 
