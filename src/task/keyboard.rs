@@ -39,7 +39,7 @@ pub(crate) fn add_scancode(scancode: u8) {
     }
     if scancode == 0x0F { // TAB Key
         for n in 1..26 {
-            println!("                          ");
+            println!("\n");
         }
     }  
     // if scancode == 0x0EF {
