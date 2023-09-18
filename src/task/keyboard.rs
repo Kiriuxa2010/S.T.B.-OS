@@ -129,7 +129,8 @@ pub async fn print_keypresses() {
                                 println!(" /syshelp = Displays This Information   \n");
                                 println!(" TAB = Clears the Screen                \n");
                                 println!(" /sysinf = Shows System Information     \n");
-                                println!(" /exit = 'Shuts' PC down                \n");
+                                println!(" /exit = 'Shuts' PC down\n");
+                                println!(" /echo = Echoes text\n");
                                 println!("=====================================   \n");
                             }
                             // if user_input.trim() == "/echo" {
