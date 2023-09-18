@@ -109,7 +109,7 @@ pub async fn print_keypresses() {
                                 loop{}
                             }
                             if user_input.trim() == "/sysinf" {
-                                println!("                          ");
+                                println!("\n");
                                 println!("=======System Information========\n");
                                 println!(" OS: S.T.B. OS by Admiralix      \n");
                                 println!(" OS VERSION: {}                  \n", OSVER );
@@ -164,7 +164,7 @@ pub async fn print_keypresses() {
                             if user_input.starts_with("/echo") {
                                 let echo_text = user_input[5..].trim();
                                 if !echo_text.is_empty() {
-                                    println!("\n {}", echo_text);
+                                    println!("\n    {}", echo_text);
                                 }
                             }
                             
