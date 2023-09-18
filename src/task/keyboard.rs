@@ -102,7 +102,7 @@ pub async fn print_keypresses() {
                             if user_input.trim() == "/exit" {
                                 // User typed "/exit," execute shutdown logic
                                 for n in 1..26 {
-                                    println!("                          ");
+                                    println!("\n");
                                 }
                                 print_shutdown();
                                 hlt();
@@ -124,6 +124,7 @@ pub async fn print_keypresses() {
                                 println!("=================================\n");
                             }
                             if user_input.trim() == "/syshelp" {
+                                println!("\n");
                                 println!("==========System Help================   \n");
                                 println!(" /syshelp = Displays This Information   \n");
                                 println!(" TAB = Clears the Screen                \n");
