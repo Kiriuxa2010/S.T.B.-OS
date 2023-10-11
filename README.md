@@ -1,6 +1,6 @@
-# S.T.B. OS (Simple Terminal Based Operating System)
+# S.T.B.™ OS (Simple Terminal Based Operating System)
 
-S.T.B. OS is a 32-bit operating system written in Rust, inspired by classic operating systems like MS-DOS. This project aims to provide a simple, lightweight, and terminal-based operating system.
+S.T.B.™ OS is a 32-bit operating system written in Rust, inspired by classic operating systems like MS-DOS. This project aims to provide a simple, lightweight, and terminal-based operating system.
 
 <img width="719" alt="Screenshot 2023-09-17 at 21 58 51" src="https://github.com/Kiriuxa2010/S.T.B.-OS/assets/71524929/78e5d5f4-b337-496d-9d60-3d1f39ba8737">
 
@@ -12,7 +12,7 @@ S.T.B. OS is a 32-bit operating system written in Rust, inspired by classic oper
 - [License](#license)
 
 ## Features
-S.T.B. OS offers several features to help you understand its capabilities:
+S.T.B.™ OS offers several features to help you understand its capabilities:
 
 * **Terminal Interface**: S.T.B. OS provides a command-line interface for interacting with the system, just like classic operating systems.
 
@@ -31,7 +31,7 @@ S.T.B. OS offers several features to help you understand its capabilities:
 > Note: The project is a work in progress, and further enhancements are planned.
 
 ## Getting Started
-To get started with S.T.B. OS, follow these steps:
+To get started with S.T.B.™ OS, follow these steps:
 
 1. **Prerequisites**: Ensure you have Rust installed on your system. You can download Rust from [rust-lang.org](https://www.rust-lang.org/).
 
@@ -41,12 +41,12 @@ To get started with S.T.B. OS, follow these steps:
    cd S.T.B.-OS
 
 ## Usage
-Once you have S.T.B. OS running, you can use the terminal interface to execute commands and explore the OS. The available commands and their usage will be documented in the project as it evolves.
+Once you have S.T.B.™ OS running, you can use the terminal interface to execute commands and explore the OS. The available commands and their usage will be documented in the project as it evolves.
 
 
 ## Contributing
 Contributing
-We welcome contributions to the project. If you want to help improve S.T.B. OS, please follow these steps:
+We welcome contributions to the project. If you want to help improve S.T.B.™ OS, please follow these steps:
 
 Fork the repository.
 
