@@ -39,6 +39,11 @@ To get started with S.T.B.™ OS, follow these steps:
    ```shell
    git clone https://github.com/Kiriuxa2010/S.T.B.-OS.git
    cd S.T.B.-OS
+3. **Build It**:
+   ```shell
+   cargo bootimage
+the compiled .bin file will be in the folder S.T.B.-OS/target/admiralix_os/debug
+
 
 ## Usage
 Once you have S.T.B.™ OS running, you can use the terminal interface to execute commands and explore the OS. The available commands and their usage will be documented in the project as it evolves.
@@ -51,17 +56,17 @@ We welcome contributions to the project. If you want to help improve S.T.B.™ O
 Fork the repository.
 
 Create a new branch for your feature or bug fix:
-
+```shell
 git checkout -b feature/my-feature
-
+````
 Make your changes and commit them:
-
+```shell
 git commit -m "Add a new feature"
-
+```
 Push your changes to your fork:
-
+```shell
 git push origin feature/my-feature
-
+```
 Open a pull request on this repository, detailing your changes and improvements.
 
 ## License
