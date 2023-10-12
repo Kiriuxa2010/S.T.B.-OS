@@ -45,7 +45,7 @@ To get started with S.T.B.™ OS, follow these steps:
    cargo bootimage
 the compiled .bin file will be in the folder S.T.B.-OS/target/admiralix_os/debug
 
-**If you dont want to build it, you can get a ready .bin file here:**
+> Note: **If you dont want to build it, you can get a ready .bin file here:**
 https://drive.google.com/drive/folders/1Cq6whB1-5AxlTZ5ChoEjYwC44aXyW9Di?usp=sharing
 
 ## Usage
