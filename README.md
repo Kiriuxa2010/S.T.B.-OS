@@ -50,6 +50,7 @@ https://drive.google.com/drive/folders/1Cq6whB1-5AxlTZ5ChoEjYwC44aXyW9Di?usp=sha
 
 ## Usage
 Once you have S.T.B.™ OS running, you can use the terminal interface to execute commands and explore the OS. The available commands and their usage will be documented in the project as it evolves.
+Use the command /syshelp to show a list of currently possible commands.
 
 
 ## Contributing
