@@ -34,12 +34,13 @@ S.T.B.™ OS offers several features to help you understand its capabilities:
 To get started with S.T.B.™ OS, follow these steps:
 
 1. **Prerequisites**: Ensure you have Rust installed on your system. You can download Rust from [rust-lang.org](https://www.rust-lang.org/).
+   **rust must be nightly!**
 
-2. **Clone the Repository**:
+3. **Clone the Repository**:
    ```shell
    git clone https://github.com/Kiriuxa2010/S.T.B.-OS.git
    cd S.T.B.-OS
-3. **Build It**:
+4. **Build It**:
    ```shell
    cargo bootimage
 the compiled .bin file will be in the folder S.T.B.-OS/target/admiralix_os/debug
