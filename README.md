@@ -45,6 +45,13 @@ To get started with S.T.B.™ OS, follow these steps:
    cargo bootimage
 the compiled .bin file will be in the folder S.T.B.-OS/target/admiralix_os/debug
 
+5. **Running It**:
+   to run S.T.B.™ OS in qemu you can use this command:
+   ```shell
+   qemu-system-x86_64 -drive format=raw,file=bootimage-admiralix_os.bin
+   ```
+   You can also burn the .bin file to a usb if you want to
+
 > Note: **If you dont want to build it, you can get a ready .bin file here:**
 https://drive.google.com/drive/folders/1Cq6whB1-5AxlTZ5ChoEjYwC44aXyW9Di?usp=sharing
 
