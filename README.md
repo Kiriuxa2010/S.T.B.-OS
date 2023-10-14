@@ -14,7 +14,7 @@ S.T.B.™ OS is a 32-bit operating system written in Rust, inspired by classic o
 ## Features
 S.T.B.™ OS offers several features to help you understand its capabilities:
 
-* **Terminal Interface**: S.T.B. OS provides a command-line interface for interacting with the system, just like classic operating systems.
+* **Terminal Interface**: S.T.B.™ OS provides a command-line interface for interacting with the system, just like classic operating systems.
 
 * **Multiple Colors**: Enjoy colorful text and graphics in your terminal.
 
