@@ -28,6 +28,8 @@ S.T.B.™ OS offers several features to help you understand its capabilities:
 
 * **Working Commands**: A set of working commands to perform various tasks.
 
+*  **Custom Filesystem**: A custom filesystem specifically made for S.T.B.™ OS
+
 > Note: The project is a work in progress, and further enhancements are planned.
 
 ## Getting Started
