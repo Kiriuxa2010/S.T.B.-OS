@@ -37,34 +37,34 @@ pub enum Color {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
-struct ColorCode(u8);
+pub struct ColorCode(u8);
 
 impl ColorCode {
-    fn new(foreground: Color, background: Color) -> ColorCode {
+    pub fn new(foreground: Color, background: Color) -> ColorCode {
         ColorCode((background as u8) << 4 | (foreground as u8))
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
-struct ScreenChar {
-    ascii_character: u8,
-    color_code: ColorCode,
+pub struct ScreenChar {
+    pub ascii_character: u8,
+    pub color_code: ColorCode,
 }
 
-const BUFFER_HEIGHT: usize = 25;
-const BUFFER_WIDTH: usize = 80;
+pub const BUFFER_HEIGHT: usize = 25;
+pub const BUFFER_WIDTH: usize = 80;
 
 #[repr(transparent)]
-struct Buffer {
+pub struct Buffer {
     chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
 
 
 pub struct Writer {
-    column_position: usize,
-    color_code: ColorCode,
-    buffer: &'static mut Buffer,
+    pub column_position: usize,
+    pub color_code: ColorCode,
+    pub buffer: &'static mut Buffer,
     // show_prompt: bool, // Flag to control whether "C:" should be displayed
 }
 
@@ -148,7 +148,7 @@ impl Writer {
         }
     }
 
-    fn clear_character(&mut self, row: usize, col: usize) {
+    pub fn clear_character(&mut self, row: usize, col: usize) {
         let blank = ScreenChar {
             ascii_character: b' ',
             color_code: self.color_code,
@@ -162,9 +162,17 @@ pub fn print_something() {
     let mut writer = WRITER.lock();
     // writer.show_prompt = false; // Hide "C:" for this message
     writer.color_code = ColorCode::new(Color::Cyan, Color::Black); // Customize the color if needed
-    writer.write_string("Welcome to S.T.B. OS 0.9.8 by Admiralix!\n");
+    writer.write_string("Welcome to S.T.B. OS 0.9.8.5 by Admiralix!\n");
     // writer.show_prompt = true; // Restore "C:" display
     writer.color_code = ColorCode::new(Color::LightGray, Color::Black); // Restore the default color
+}
+
+pub fn print_error1() {
+    use core::fmt::Write;
+    let mut writer = WRITER.lock();
+    writer.color_code = ColorCode::new(Color::Red, Color::Black); // Customize the color if needed
+    writer.write_string("\n use /syshelp to get a list of all possible commands\n");
+    writer.color_code = ColorCode::new(Color::LightGray, Color::Black); // Restore the default color 
 }
 
 // pub fn print_bsod() {
