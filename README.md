@@ -2,7 +2,7 @@
 
 S.T.B.™ OS is a 32-bit operating system written in Rust, inspired by classic operating systems like MS-DOS. This project aims to provide a simple, lightweight, and terminal-based operating system.
 
-<img width="719" alt="Screenshot 2023-09-17 at 21 58 51" src="https://github.com/Kiriuxa2010/S.T.B.-OS/assets/71524929/78e5d5f4-b337-496d-9d60-3d1f39ba8737">
+<img width="717" alt="Screenshot 2023-10-22 at 12 50 10" src="https://github.com/Kiriuxa2010/S.T.B.-OS/assets/71524929/22a18700-9252-4075-b0ba-4bf7f89fa513">
 
 ## Table of Contents
 - [Features](#features)
