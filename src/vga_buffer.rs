@@ -99,21 +99,6 @@ impl Writer {
         let row = BUFFER_HEIGHT - 1;
         let col = self.column_position;
     
-        if col < 13 {
-            self.write_byte(b'u'); // Display 'u'
-            self.write_byte(b's'); // Display 's'
-            self.write_byte(b'e'); // Display 'e'
-            self.write_byte(b'r'); // Display 'r'
-            self.write_byte(b'@'); // Display '$'
-            self.write_byte(b'a'); // Display 'a'
-            self.write_byte(b'o'); // Display 'o'
-            self.write_byte(b's'); // Display 's'
-            self.write_byte(b':'); // Display ':'
-            self.write_byte(b' '); // Display ' '
-            self.write_byte(b'#'); // Display ' '
-            self.write_byte(b' '); // Display ' '
-        }
-    
         for byte in s.bytes() {
             match byte {
                 0x20..=0x7e | b'\n' => self.write_byte(byte),
