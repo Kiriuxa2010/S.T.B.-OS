@@ -11,6 +11,13 @@ S.T.B.™ OS is a 32-bit operating system written in Rust, inspired by classic o
 - [Contributing](#contributing)
 - [License](#license)
 
+## Latest Change Logs
+Version 0.9.8.6: 
+* added mkdir command.
+  
+Current Bugs:
+* /cd .. causes a kernel panic
+
 ## Features
 S.T.B.™ OS offers several features to help you understand its capabilities:
 
