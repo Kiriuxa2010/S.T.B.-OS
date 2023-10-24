@@ -14,6 +14,7 @@ S.T.B.™ OS is a 32-bit operating system written in Rust, inspired by classic o
 ## Latest Change Logs
 Version 0.9.8.6: 
 * added mkdir command.
+* added touch command.
   
 Current Bugs:
 * /cd .. causes a kernel panic
