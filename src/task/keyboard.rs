@@ -33,9 +33,6 @@ lazy_static! {
     pub static ref CURRENT_DIRECTORY: Mutex<String> = Mutex::new("/".to_string());
 }
 
-/// Called by the keyboard interrupt handler
-///
-/// Must not block or allocate.
 pub(crate) fn add_scancode(scancode: u8) {
     if let Ok(queue) = SCANCODE_QUEUE.try_get() {
         if let Err(_) = queue.push(scancode) {
@@ -46,12 +43,7 @@ pub(crate) fn add_scancode(scancode: u8) {
     } else {
         println!("WARNING: scancode queue uninitialized");
     } 
-    // if scancode == 0x0EF {
-    //     clear_character();
-       
-    // }
 }
-
 
 pub struct ScancodeStream {
     _private: (),
@@ -106,7 +98,6 @@ struct Directory {
     parent: Option<usize>,
 }
 
-
 // Create the root directory
 lazy_static! {
     static ref ROOT: Mutex<Directory> = Mutex::new(Directory {
@@ -121,21 +112,20 @@ lazy_static! {
                 content: "This is file 2.".to_string(),
             },
         ],
-        subdirectories: vec![Directory {
-            name: "kernl".to_string(),
-            files: vec![File {
-                name: "stbos.uff".to_string(),
-                content: "влвьщл.".to_string(),
-            }],
-            subdirectories: vec![],
-            parent: None, // The root directory has no parent.
-        }],
+        subdirectories: vec![
+            Directory {
+                name: "kernl".to_string(),
+                files: vec![File {
+                    name: "stbos.uff".to_string(),
+                    content: "This is the Unreadable File Format, UFF for short".to_string(),
+                }],
+                subdirectories: vec![],
+                parent: Some(1), // Set the parent to the index of the parent directory ("$/")
+            },
+        ],
         parent: None, // The root directory has no parent.
     });
 }
-
-
-
 
 // Function to list files in the current directory
 fn ls() {
@@ -164,23 +154,77 @@ fn cd(new_directory: &str) {
 
     if new_directory == ".." {
         if let Some(parent_index) = current_directory.parent {
-            let parent_directory = &mut current_directory.subdirectories[parent_index];
-            let parent_parent = parent_directory.parent;
-            parent_directory.parent = Some(parent_parent.unwrap_or(0));
-            *current_directory = parent_directory.clone();
+            // Print some debug information
+            println!("Changing to parent directory (index: {})", parent_index);
+
+            // Change the current directory to the parent directory
+            current_directory.parent = current_directory.subdirectories[parent_index].parent;
+            *current_directory = current_directory.subdirectories[parent_index].clone();
         } else {
             println!("\nAlready at the root directory.");
         }
     } else {
         if let Some(sub_index) = current_directory.subdirectories.iter().position(|dir| dir.name == new_directory) {
-            let sub_directory = current_directory.subdirectories[sub_index].clone();
-            let sub_parent = sub_directory.parent;
-            current_directory.parent = Some(sub_parent.unwrap_or(0));
-            *current_directory = sub_directory;
+            // Print some debug information
+            println!("Changing to subdirectory (index: {})", sub_index);
+
+            // Change the current directory to the specified subdirectory
+            current_directory.parent = Some(sub_index);
+            *current_directory = current_directory.subdirectories[sub_index].clone();
         } else {
             println!("\nDirectory '{}' not found.", new_directory);
         }
     }
+}
+
+fn mkdir(new_directory: &str) {
+    let mut current_directory = ROOT.lock();
+
+    // Check if the new directory name is empty
+    if new_directory.is_empty() {
+        println!("\nDirectory name cannot be empty.");
+        return;
+    }
+
+    // Check if the new directory name already exists
+    if current_directory.subdirectories.iter().any(|dir| dir.name == new_directory) {
+        println!("\nDirectory '{}' already exists.", new_directory);
+        return;
+    }
+
+    // Create the new directory and add it to the current directory
+    current_directory.subdirectories.push(Directory {
+        name: new_directory.to_string(),
+        files: vec![],
+        subdirectories: vec![],
+        parent: Some(0), // Set the parent to the current directory
+    });
+
+    println!("\nDirectory '{}' created.", new_directory);
+}
+
+fn touch(filename: &str, content: &str) {
+    let mut current_directory = ROOT.lock();
+
+    // Check if the new file name is empty
+    if filename.is_empty() {
+        println!("\nFile name cannot be empty.");
+        return;
+    }
+
+    // Check if the new file name already exists
+    if current_directory.files.iter().any(|file| file.name == filename) {
+        println!("\nFile '{}' already exists.", filename);
+        return;
+    }
+
+    // Create the new file and add it to the current directory
+    current_directory.files.push(File {
+        name: filename.to_string(),
+        content: content.to_string(),
+    });
+
+    println!("\nFile '{}' created.", filename);
 }
 
 pub async fn print_keypresses() {
@@ -189,6 +233,17 @@ pub async fn print_keypresses() {
     let mut user_input = String::new();  // Buffer to store user input
     let mut echo_text = String::new();
     let new_dir = String::new();
+
+    let ascii_art =r#"
+      ######  ######### #########          ###         ######
+    ##           ###    ###   ###      ###     ###   ##
+    ##           ###    ###    ###    ###       ###  ##
+      ######     ###    ########      ###       ###    ######
+           ##    ###    ###    ###    ###       ###         ##
+           ##    ###    ###   ###       ###   ###           ##
+     ######      ###    #########          ###         ######                
+   
+    "#;
 
     while let Some(scancode) = scancodes.next().await {
         if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
@@ -207,6 +262,7 @@ pub async fn print_keypresses() {
                                 loop {}
                             } else if user_input.trim() == "/sysinf" {
                                 println!("\n=======System Information========\n");
+                                println!("\n{}", ascii_art);
                                 println!(" OS: S.T.B. OS by Admiralix      \n");
                                 println!(" OS VERSION: {}                  \n", OSVER );
                                 println!(" GPU: VGA                        \n");
@@ -216,8 +272,7 @@ pub async fn print_keypresses() {
                                     println!("Failed to retrieve CPU name.");
                                 }
                                 println!(" RES: 80x25px                    \n");
-                                // let ram_size = get_ram_size();
-                                println!("RAM Size: UNKNOWN");
+                                println!(" RAM Size: UNKNOWN");
                                 println!("=================================\n");
                             } else if user_input.trim() == "/syshelp" {
                                 println!("\n");
@@ -228,6 +283,12 @@ pub async fn print_keypresses() {
                                 println!(" /shutdown = 'Shuts' PC down              \n");
                                 println!(" /echo = Echoes text                      \n");
                                 println!(" /refr echo = references the echo input   \n");
+                                println!("EXPERIMENTAL:                             \n");
+                                println!("/cd = change dir.                         \n");
+                                println!("/lf = list files                          \n");
+                                println!("/sw = show content of files               \n");
+                                println!("/mkdir = makes a dir.                     \n");
+                                println!("/tch = makes a new file.                  \n");
                                 println!("=======================================   \n");
                             } else if user_input.starts_with("/echo ") {
                                 // Echo command
@@ -250,6 +311,20 @@ pub async fn print_keypresses() {
                             } else if user_input.starts_with("/sw ") {
                                 let filename = &user_input[4..].trim();
                                 cat(filename);
+                            } else if user_input.starts_with("/mkdir ") {
+                                let filename = &user_input[6..].trim();
+                                mkdir(filename);
+                            } else if user_input.starts_with("/tch ") {
+                                let input = &user_input[5..].trim(); // Trim additional spaces
+                                let parts: Vec<&str> = input.splitn(2, ' ').collect();
+                            
+                                if parts.len() != 2 {
+                                    println!("\nUsage: /tch <filename> <content>");
+                                } else {
+                                    let filename = parts[0];
+                                    let content = parts[1];
+                                    touch(filename, content);
+                                }
                             } else if character == '\u{0008}' {
                                 // Handle Backspace key
                                 if !user_input.is_empty() {

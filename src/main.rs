@@ -7,7 +7,6 @@
 
 use core::panic::PanicInfo; // imports
 mod vga_buffer;
-// mod getcpu;
 use bootloader::{BootInfo, entry_point};
 use crate::vga_buffer::{Writer, WRITER};
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
@@ -30,9 +29,6 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from
     println!("Starting {} OS...\n", osname);
 
     delay(5);
-    
-    play_beep();
-
     vga_buffer::print_something();
     admiralix_os::init();
     
@@ -40,7 +36,6 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! { // main function, boots from
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) }; // this allocates the frame memory system time at 0x8493 and boot memory map, it also boot_info
- 
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     let mut executor = Executor::new();
@@ -58,60 +53,13 @@ fn delay(seconds: u32) {
     for _ in 0..total_iterations {
         unsafe{
             asm!
-            ("nop",
-            
+            (
+            "nop",
             options(nostack)
             );
         }
     }
 }
-
-pub fn play_beep() {
-    // Define the I/O ports for the speaker
-    const SPEAKER_CONTROL_PORT: u16 = 0x61;
-    const SPEAKER_DATA_PORT: u16 = 0x42;
-
-    // Disable the speaker by clearing the least significant bit of the control port
-    let mut control_port = Port::new(SPEAKER_CONTROL_PORT);
-    let control_byte: u8 = unsafe { control_port.read() };
-    unsafe {
-        control_port.write(control_byte & 0xFE);
-    }
-
-    // Set the frequency for the beep (adjust this to change the pitch)
-    let mut data_port = Port::new(SPEAKER_DATA_PORT);
-    let frequency: u32 = 1000; // Adjust this for the desired frequency
-    let divisor: u32 = 1193180 / frequency;
-
-    // Send the command to the speaker
-    unsafe {
-        data_port.write((divisor & 0xFF) as u8);
-        data_port.write((divisor >> 8) as u8);
-    }
-
-    // Enable the speaker by setting the least significant bit of the control port
-    unsafe {
-        control_port.write(control_byte | 0x01);
-    }
-
-    // Wait for a short duration to allow the beep to play (you can adjust this)
-    for _ in 0..10000 {
-        unsafe {
-            asm!
-            (
-                "nop",
-                options(nostack) 
-            );
-        }
-    }
-
-    // Disable the speaker again
-    unsafe {
-        control_port.write(control_byte & 0xFE);
-    }
-}
-
-
 
 #[cfg(not(test))] // tester 
 #[panic_handler]
@@ -120,12 +68,3 @@ fn panic(_info: &PanicInfo) -> ! {
     admiralix_os::hlt_loop();
     loop {}
 }
-
-// async fn async_number() -> u32 {
-//     42
-// }
-
-//async fn example_task() {
-//    let number = async_number().await;
-//    println!("async number: {}", number);
-//}
