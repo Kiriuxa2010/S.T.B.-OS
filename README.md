@@ -18,6 +18,7 @@ Version 0.9.8.6:
   
 Current Bugs:
 * /cd .. causes a kernel panic
+* backspace key kinda works(minor bugs)
 
 ## Features
 S.T.B.™ OS offers several features to help you understand its capabilities:
