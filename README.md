@@ -48,7 +48,15 @@ To get started with S.T.B.™ OS, follow these steps:
 
 1. **Prerequisites**: Ensure you have Rust installed on your system. You can download Rust from [rust-lang.org](https://www.rust-lang.org/).
    **rust must be nightly!**
+   Install These too:
+   ```shell
+    rustup component add llvm-tools-preview
+    rustup target add thumbv7em-none-eabihf
+    cargo build --target thumbv7em-none-eabihf
 
+    rustup target add admiralix_os.json
+    cargo build --target admiralix_os.json
+    ```
 3. **Clone the Repository**:
    ```shell
    git clone https://github.com/Kiriuxa2010/S.T.B.-OS.git
