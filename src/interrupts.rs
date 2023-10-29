@@ -110,13 +110,6 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: InterruptStac
     let mut port = Port::new(0x60);
     let scancode: u8 = unsafe { port.read() };
     crate::task::keyboard::add_scancode(scancode);
-    
-    fn add_scancode(scancode: u8) {
-        if scancode == 0x2A { // Replace 0x2A with the desired scancode
-            println!("AdmiralixOS");
-        }
-        // Other scancode processing logic
-    }
 
     unsafe {
         PICS.lock()

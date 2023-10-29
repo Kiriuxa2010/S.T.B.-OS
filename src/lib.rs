@@ -17,6 +17,8 @@ pub mod vga_buffer;
 pub mod gdt;
 pub mod memory;
 pub mod allocator;
+pub mod stbfs;
+pub mod getcpu;
 
 extern crate alloc;
 

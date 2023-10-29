@@ -7,9 +7,8 @@ use core::arch::asm;
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
-        color_code: ColorCode::new(Color::LightGray, Color::Black),
+        color_code: ColorCode::new(Color::White, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-        // show_prompt: false, // Add a flag to control whether "C:" should be displayed
     });
 }
 
@@ -80,7 +79,6 @@ impl Writer {
                 let row = BUFFER_HEIGHT - 1;
                 let col = self.column_position;
 
-
                 self.buffer.chars[row][col].write(ScreenChar {
                     ascii_character: byte,
                     color_code: self.color_code,
@@ -149,26 +147,42 @@ pub fn print_something() {
     writer.color_code = ColorCode::new(Color::Cyan, Color::Black); // Customize the color if needed
     writer.write_string("Welcome to S.T.B. OS 0.9.8.5 by Admiralix!\n");
     // writer.show_prompt = true; // Restore "C:" display
-    writer.color_code = ColorCode::new(Color::LightGray, Color::Black); // Restore the default color
+    writer.color_code = ColorCode::new(Color::White, Color::Black); // Restore the default color
+}
+
+pub fn ascii() {
+    use core::fmt::Write;
+    let mut writer = WRITER.lock();
+    let ascii_art = r#"
+    .d8888b.      88888888888     888888b.            .d88888b.   .d8888b.  
+    d88P  Y88b         888         888  "88b          d88P" "Y88b d88P  Y88b 
+    Y88b.              888         888  .88P          888     888 Y88b.      
+     "Y888b.           888         8888888K.          888     888  "Y888b.   
+        "Y88b.         888         888  "Y88b         888     888     "Y88b. 
+          "888         888         888    888         888     888       "888 
+    Y88b  d88P d8b     888     d8b 888   d88P d8b     Y88b. .d88P Y88b  d88P 
+     "Y8888P"  Y8P     888     Y8P 8888888P"  Y8P      "Y88888P"   "Y8888P"  
+    "#;
+    writer.color_code = ColorCode::new(Color::LightGreen, Color::Black); // Customize the color if needed
+    writer.write_string(ascii_art);
+    writer.color_code = ColorCode::new(Color::White, Color::Black); // Restore the default color
 }
 
 pub fn print_error1() {
     use core::fmt::Write;
     let mut writer = WRITER.lock();
     writer.color_code = ColorCode::new(Color::Red, Color::Black); // Customize the color if needed
-    writer.write_string("\n use /syshelp to get a list of all possible commands\n");
-    writer.color_code = ColorCode::new(Color::LightGray, Color::Black); // Restore the default color 
+    writer.write_string("\nuse /syshelp to get a list of all possible commands\n");
+    writer.color_code = ColorCode::new(Color::White, Color::Black); // Restore the default color 
 }
 
-// pub fn print_bsod() {
-//     use core::fmt::Write;
-//     let mut writer = Writer {
-//         column_position: 0,
-//         color_code: ColorCode::new(Color::White, Color::Blue),
-//         buffer:unsafe { &mut *(0xb8000 as *mut Buffer)},
-//     };
-//     writer.write_string("BSoD\n");
-// }
+pub fn OK() {
+    use core::fmt::Write;
+    let mut writer = WRITER.lock();
+    writer.color_code = ColorCode::new(Color::LightGreen, Color::Black); // Customize the color if needed
+    writer.write_string("\nOK\n");
+    writer.color_code = ColorCode::new(Color::White, Color::Black); // Restore the default color 
+}
 
 pub fn print_shutdown() {
     use core::fmt::Write;
@@ -183,9 +197,8 @@ pub fn print_shutdown() {
     // Restore "C:" display and the default color
     let mut writer = WRITER.lock();
     // writer.show_prompt = true;
-    writer.color_code = ColorCode::new(Color::LightGray, Color::Black);
+    writer.color_code = ColorCode::new(Color::White, Color::Black);
 }
-
 
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
