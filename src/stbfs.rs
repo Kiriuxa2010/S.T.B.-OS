@@ -1,27 +1,24 @@
-use crate::{print, println, vga_buffer::{print_shutdown}};
-use conquer_once::spin::OnceCell;
+/* The infamous STBFS, its quite simple actually, its an in-memory filesystem. */
+
+/* todo:
+    remove unnecesary imports
+    make the filesystem not in-memory
+    make cd.. work 
+*/
+use crate::{print, println, vga_buffer::{print_shutdown}}; 
 use alloc::string::String;
 use lazy_static::lazy_static;
 use spin::Mutex;
-use core::arch::asm;
-use core::str::FromStr;
-use alloc::string::ToString;
-use alloc::format;
+use crate::alloc::string::ToString;
 use core::{
     pin::Pin,
     task::{Context, Poll},
 };
-use crossbeam_queue::ArrayQueue;
 use futures_util::{
     stream::{Stream, StreamExt},
     task::AtomicWaker,
 };
-use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 use x86_64::instructions::hlt;
-use crate::vga_buffer::WRITER;
-use crate::vga_buffer::BUFFER_HEIGHT;
-// mod getcpu;
-use bootloader::{BootInfo, entry_point};
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 
 // Define a file structure
@@ -62,7 +59,7 @@ lazy_static! {
                     content: "This is the Unreadable File Format, UFF for short".to_string(),
                 }],
                 subdirectories: vec![],
-                parent: Some(1), // Set the parent to the index of the parent directory ("$/")
+                parent: Some(0), // Set the parent to the index of the parent directory ("$/")
             },
         ],
         parent: None, // The root directory has no parent.
@@ -98,13 +95,18 @@ pub fn cd(new_directory: &str) {
         if let Some(parent_index) = current_directory.parent {
             // Print some debug information
             println!("Changing to parent directory (index: {})", parent_index);
-
+            println!("Current directory name: {}", current_directory.name);
+            println!("Parent directory name: {}", current_directory.subdirectories[parent_index].name);
+        
             // Change the current directory to the parent directory
             current_directory.parent = current_directory.subdirectories[parent_index].parent;
             *current_directory = current_directory.subdirectories[parent_index].clone();
+        
+            println!("New current directory name: {}", current_directory.name);
         } else {
             println!("\nAlready at the root directory.");
         }
+         
     } else {
         if let Some(sub_index) = current_directory.subdirectories.iter().position(|dir| dir.name == new_directory) {
             // Print some debug information

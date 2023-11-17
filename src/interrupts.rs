@@ -1,4 +1,8 @@
-#![feature(asm)]
+/*Just the Interrupts here, i honestly forgot how the code works, maybe if i look more into it i'll remember.
+  but tbh you dont need to edit or modify this code, thats like as if when you're making your linux distro,
+  you rewrite the whole damn kernel, i bet you wouldnt do that.                                             */
+
+#![feature(asm)] // features and imports
 #![feature(llvm_asm)]
 
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
@@ -9,7 +13,6 @@ use pic8259::ChainedPics;
 use crate::vga_buffer;
 use spin;
 use lazy_static::lazy_static;
-// pub mod cpuid;
 
 pub const PIC_1_OFFSET: u8 = 32;
 pub const PIC_2_OFFSET: u8 = PIC_1_OFFSET + 8;

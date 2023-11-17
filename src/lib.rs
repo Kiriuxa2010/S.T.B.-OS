@@ -1,3 +1,5 @@
+/* Yeah this just compiles all the stuff from other .rs files(keyboard.rs for exampel) to make it all callable in the main.rs*/
+
 #![no_std]
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
@@ -9,7 +11,6 @@
 
 use core::panic::PanicInfo;
 
-pub mod commands;
 pub mod task;
 pub mod interrupts;
 pub mod serial;
@@ -22,8 +23,8 @@ pub mod getcpu;
 
 extern crate alloc;
 
-pub fn init() {
-    // shell::init_shell();
+pub fn init() { // this is the initialization of everything
+    // shell::init_shell(); LMFAO this was me trying to add commands back when i was stupid
     interrupts::init_idt();
     gdt::init();
     unsafe { interrupts::PICS.lock().initialize()};

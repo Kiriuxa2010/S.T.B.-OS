@@ -1,3 +1,5 @@
+/* Yeah Memory type stuff, not gonna write much up here cause i have wrote much down there */
+
 use bootloader::bootinfo::{MemoryMap, MemoryRegionType};
 use x86_64::{
     structures::paging::{

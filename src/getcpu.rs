@@ -1,7 +1,9 @@
+/*Some Inline Assembly that i got from chatgpt(im not gonna learn assembly, fuck you!) that just prints the CPU name and some other shit(the other shit dont work) */
+
 #![no_std]
 #![feature(asm)]
 
-use crate::println;
+use crate::println; // the basic imports you'd need
 use core::arch::asm;
 
 pub fn get_cpu_name() -> Option<[u8; 48]> {
@@ -33,7 +35,7 @@ pub fn get_cpu_name() -> Option<[u8; 48]> {
     Some(cpu_name)
 }
 
-pub fn print_cpu_name(cpu_name: &[u8; 48]) {
+pub fn print_cpu_name(cpu_name: &[u8; 48]) { // yepprate my
     let name_str = core::str::from_utf8(cpu_name).unwrap_or("<Invalid UTF-8>");
     println!(" CPU Name: {}", name_str.trim());
 }

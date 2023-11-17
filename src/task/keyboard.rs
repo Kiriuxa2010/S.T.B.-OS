@@ -1,3 +1,6 @@
+/* This is probably the most important code(except for vga buffer and main), this adds keyboard support and commands! */
+
+// some imports
 use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}, vga_buffer::{print_shutdown, ascii, print_error1}, stbfs::{ls, cd, mkdir, touch, cat}};
 use conquer_once::spin::OnceCell;
 use alloc::string::String;
@@ -21,7 +24,6 @@ use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 use x86_64::instructions::hlt;
 use crate::vga_buffer::WRITER;
 use crate::vga_buffer::BUFFER_HEIGHT;
-// mod getcpu;
 use bootloader::{BootInfo, entry_point};
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 
@@ -29,10 +31,6 @@ static SCANCODE_QUEUE: OnceCell<ArrayQueue<u8>> = OnceCell::uninit();
 static WAKER: AtomicWaker = AtomicWaker::new();
 
 const OSVER: &str = "0.9.8.5";
-
-lazy_static! {
-    pub static ref CURRENT_DIRECTORY: Mutex<String> = Mutex::new("/".to_string());
-}
 
 pub(crate) fn add_scancode(scancode: u8) {
     if let Ok(queue) = SCANCODE_QUEUE.try_get() {
@@ -135,7 +133,7 @@ pub async fn print_keypresses() {
                                 println!("/tch = makes a new file.                  ");
                                 println!("=======================================   ");
                             } else if user_input.trim() == "/who" {
-                                println!("\nUSER: Default::User::Administrator");
+                                println!("\nUSER: AOS User");
                                 println!("USER PRIVILEGES: Administrator");
                             } else if user_input.starts_with("/echo ") {
                                 // Echo command
@@ -178,8 +176,10 @@ pub async fn print_keypresses() {
                                 println!("icewallowpiz - Leader of Project and Lead Programmer\n");
                                 println!("Contributors:                 ");
                                 println!("DAWOOD - Lead Website Designer\n");
+                                println!("Pr1thv1 - Fixed a Keyboard problem");
                                 println!("Special Thanks to:");
-                                println!("Pr1thv1");
+                                println!("Snneezou");
+                                
 
                             } else if character == '\u{0008}' {
                                 // Handle Backspace key
@@ -187,7 +187,7 @@ pub async fn print_keypresses() {
                                     // Remove the last character from the input buffer
                                     user_input.pop();
                                     // Print the backspace character to erase the character on the screen
-                                    print!("\u{0008} \u{0008}");
+                                    // print!("\u{0008} \u{0008}");
                                 }
                             } else {
                                 // Unknown command
