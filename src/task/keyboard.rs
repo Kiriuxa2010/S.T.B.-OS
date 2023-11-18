@@ -1,7 +1,7 @@
 /* This is probably the most important code(except for vga buffer and main), this adds keyboard support and commands! */
 
 // some imports
-use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}, vga_buffer::{print_shutdown, ascii, print_error1}, stbfs::{ls, cd, mkdir, touch, cat}};
+use crate::{print, println, task::getcpu::{get_cpu_name, print_cpu_name}, vga_buffer::{print_shutdown, ascii, print_error1, print_all_ascii, print_smiley_face}, stbfs::{ls, cd, mkdir, touch, cat}};
 use conquer_once::spin::OnceCell;
 use alloc::string::String;
 use lazy_static::lazy_static;
@@ -81,6 +81,22 @@ impl Stream for ScancodeStream {
     }
 }
 
+pub fn print_binary_character(binary_string: &str) {
+    // Remove the '0b' prefix if present and parse the binary string
+    if let Ok(character) = u8::from_str_radix(&binary_string.replace("0b", ""), 2) {
+        // Convert the u8 value to a char
+        if let Some(ascii_char) = core::char::from_u32(character.into()) {
+            // Print the character
+            println!("\n{}", ascii_char);
+        } else {
+            println!("\nInvalid ASCII character");
+        }
+    } else {
+        println!("\nInvalid binary representation");
+    }
+}
+
+
 pub async fn print_keypresses() {
     let mut scancodes = ScancodeStream::new();
     let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore);
@@ -159,6 +175,13 @@ pub async fn print_keypresses() {
                             } else if user_input.starts_with("/mkdir ") {
                                 let filename = &user_input[6..].trim();
                                 mkdir(filename);
+                            } else if user_input.starts_with("/asciitest") {
+                                // print_all_ascii();
+                                print_smiley_face()
+                            } else if user_input.starts_with("*print ") {
+                                // Extract the binary string after the command
+                                let binary_string = &user_input[7..].trim();
+                                print_binary_character(binary_string);
                             } else if user_input.starts_with("/tch ") {
                                 let input = &user_input[5..].trim(); // Trim additional spaces
                                 let parts: Vec<&str> = input.splitn(2, ' ').collect();

@@ -1,3 +1,5 @@
+/*Some Inline Assembly that i got from chatgpt(im not gonna learn assembly, fuck you!) that just prints the CPU name and some other shit(the other shit dont work) */
+
 #![no_std]
 #![feature(asm)]
 

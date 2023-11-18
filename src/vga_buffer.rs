@@ -89,6 +89,15 @@ impl Writer { // implementation of the Writer
             }
         }
     }
+    pub fn write_byte_at(&mut self, index: usize, byte: u8) {
+        let row = index / BUFFER_WIDTH;
+        let col = index % BUFFER_WIDTH;
+
+        self.buffer.chars[row][col].write(ScreenChar {
+            ascii_character: byte,
+            color_code: self.color_code,
+        });
+    }
 
     pub fn write_string(&mut self, s: &str) { // allows to write whole strings(println)
         if self.column_position >= BUFFER_WIDTH {
@@ -173,6 +182,41 @@ pub fn print_error1() {
     writer.color_code = ColorCode::new(Color::Red, Color::Black); // Customize the color if needed
     writer.write_string("\nuse /syshelp to get a list of all possible commands\n");
     writer.color_code = ColorCode::new(Color::White, Color::Black); // Restore the default color 
+}
+
+pub fn print_all_ascii() {
+    let mut writer = WRITER.lock();
+    writer.color_code = ColorCode::new(Color::White, Color::Black); // Set the color to white text on a black background
+
+    for i in 0..=127 {
+        let ascii_char = match i {
+            0x20..=0x7e => i as u8, // printable ASCII characters
+            _ => 0xfe, // display a special character for non-printable ASCII
+        };
+
+        writer.write_byte(ascii_char);
+    }
+}
+
+// Define a custom smiley face ASCII character pattern (5x8 pixels)
+const SMILEY_FACE_PATTERN: [u8; 2] = [
+    0b00000010,
+    0b00011000,
+];
+
+pub fn print_smiley_face() {
+    let mut writer = WRITER.lock();
+    writer.color_code = ColorCode::new(Color::White, Color::Black);
+
+    const CUSTOM_ASCII_INDEX: usize = 128;
+
+    // Write the smiley face pattern to the VGA buffer for the custom ASCII index
+    for (i, &byte) in SMILEY_FACE_PATTERN.iter().enumerate() {
+        writer.write_byte_at(CUSTOM_ASCII_INDEX * 8 + i, byte);
+    }
+
+    // Display the custom smiley face character at a specific position
+    writer.write_byte(CUSTOM_ASCII_INDEX as u8);
 }
 
 pub fn OK() {
