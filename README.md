@@ -1,6 +1,6 @@
 # S.T.B.™ OS (Simple Terminal Based Operating System)
 
-S.T.B.™ OS is a 32-bit operating system written in Rust, inspired by classic operating systems like MS-DOS. This project aims to provide a simple, lightweight, and terminal-based operating system.
+S.T.B.™ OS is a 64-bit operating system written in Rust, inspired by classic operating systems like MS-DOS. This project aims to provide a simple, lightweight, and terminal-based operating system.
 
 <img width="720" alt="image" src="https://github.com/Kiriuxa2010/S.T.B.-OS/assets/71524929/16030955-3143-4c2c-9c77-644f1628d2a5">
 
